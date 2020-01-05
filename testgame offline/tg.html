@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Actual Adventure</title>
+  <link rel="stylesheet" href="tg.css" />
+</head>
+
+<body>
+  <div>
+    <!-- TEXT ABOVE CANVAS DIV -->
+    <img id="playbutton" src="playButton.png" onclick="startGame()">
+    <span class="text" id="money">Money: 50</span>
+    <span class="text" id="health">Health: 100</span>
+    <span class="text" id="cas">00:00</span>
+  </div>
+
+  <div class="inline">
+    <!-- CANVAS DIV -->
+    <canvas id="canv"></canvas>
+  </div>
+
+  <div class="inline">
+    <!-- SPELLS DIV -->
+    <div class="inline" onclick="purchasePush()">
+      <img class="pistolLevelDiv" id="pushIcon" src="pushIcon.png" width="60px" height="60px">
+      <span class="pistolLevelDiv" id="pushLevel">Level 0</span>
+      <span class="pistolLevelDiv" id="pushUpgradeCost">$50</span>
+      <span class="pistolLevelDiv" id="pushCooldown" style="color: black">.<br>.</span>
+      <span class="pistolLevelDiv" style="color: black">.</span>
+      <span class="pistolLevelDiv" style="color: black">.</span>
+    </div>
+    <div class="inline" onclick="purchaseFreeze()">
+      <img class="pistolLevelDiv" id="freezeIcon" src="freezeIcon.png" width="60px" height="60px">
+      <span class="pistolLevelDiv" id="freezeLevel">Level 0</span>
+      <span class="pistolLevelDiv" id="freezeUpgradeCost">$50</span>
+      <span class="pistolLevelDiv" id="freezeCooldown" style="color: black">.<br>.</span>
+      <span class="pistolLevelDiv" id="freezeDuration" style="color: black">Duration:<br>2s</span>
+    </div>
+    <div class="inline" onclick="purchaseExplosion()">
+      <img class="pistolLevelDiv" id="explosionIcon" src="explosionIcon.png" width="60px" height="60px">
+      <span class="pistolLevelDiv" id="explosionLevel">Level 0</span>
+      <span class="pistolLevelDiv" id="explosionUpgradeCost">$50</span>
+      <span class="pistolLevelDiv" id="explosionCooldown" style="color: black">Cooldown:<br>30s</span>
+      <span class="pistolLevelDiv" id="explosionDamage" style="color: black">Damage:<br>15</span>
+    </div>
+  </div>
+
+  <div>
+    <!-- SHOP DIV -->
+    <div class="inline" onclick="upgradePistol()">
+      <img class="pistolLevelDiv" id="pistolIcon" src="pistolIcon.png" width="60px" height="60px">
+      <span class="pistolLevelDiv" id="pistolLevel">Level 1</span>
+      <span class="pistolLevelDiv" id="pistolUpgradeCost">$50</span>
+      <span class="pistolLevelDiv" id="pistolRecharge">Recharge:<br>1s</span>
+    </div>
+    <div class="inline" onclick="upgradeBullet()">
+      <img class="pistolLevelDiv" id="bulletIcon" src="bulletIcon.png" width="60px" height="60px">
+      <span class="pistolLevelDiv" id="bulletLevel">Level 1</span>
+      <span class="pistolLevelDiv" id="bulletUpgradeCost">$50</span>
+      <span class="pistolLevelDiv" id="bulletWidth">Width:<br>4px</span>
+    </div>
+    <div class="inline" onclick="upgradeBulletDamage()">
+      <img class="pistolLevelDiv" id="bulletDamageIcon" src="bulletDamageIcon.png" width="60px" height="60px">
+      <span class="pistolLevelDiv" id="bulletDamageLevel">Level 1</span>
+      <span class="pistolLevelDiv" id="bulletDamageUpgradeCost">$100</span>
+      <span class="pistolLevelDiv" id="bulletDamage">Damage:<br>15</span>
+    </div>
+    <div class="inline" onclick="buyLaserPointer()">
+      <img class="pistolLevelDiv" id="scopeIcon" src="scopeIcon.png" width="60px" height="60px">
+      <span class="pistolLevelDiv" id="laserPurchaseCost">$100</span>
+      <span class="pistolLevelDiv" style="color: black">.</span>
+      <span class="pistolLevelDiv" style="color: black">.</span>
+      <span class="pistolLevelDiv" style="color: black">.</span>
+    </div>
+  </div>
+
+
+
+  <script src="../2dlidlengine.js"></script>
+  <script src="tg.js"></script>
+  <script>
+    function startGame() {
+      if (gamerunning) {
+        gamerunning = false;
+        document.getElementById("playbutton").src = "playButton.png"
+      } else {
+        if (!lost) gamerunning = true;
+        document.getElementById("playbutton").src = "pauseButton.png"
+      }
+    }
+  </script>
+</body>
+
+</html>
