@@ -1,0 +1,11 @@
+<div class="login-box">
+            <h1>Available games</h1><br>
+            <table id="table">
+                <tr>
+                    <td class="gameName">Game name</td>
+                    <td class="leaderName">Leader name</td>
+                    <td class="password">Password</td>
+                    <td class="joinButton"></td>
+                </tr>
+            </table>
+        </div>
