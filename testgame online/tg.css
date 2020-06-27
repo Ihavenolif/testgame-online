@@ -120,3 +120,12 @@
     height: 35px;
     width: 35px;
   }
+
+  .chooseOneBtn{
+    background: none;
+    border: 2px solid #4caf50;
+    color: white;
+    padding: 5px;
+    font-size: 18px;
+    cursor: pointer;
+  }
