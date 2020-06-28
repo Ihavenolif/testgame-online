@@ -159,7 +159,7 @@ function connectOfficial(){
 }
 
 function connectCustom(){
-    if(document.getElementById("ipCache").value.startsWith("localhost")){
+    if(document.getElementById("ipCache").value.startsWith("localhost") || document.getElementById("ipCache").value.startsWith("192")){
         cacheIP = "http://" + document.getElementById("ipCache").value
     } else{
         cacheIP = "https://" + document.getElementById("ipCache").value 
