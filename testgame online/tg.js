@@ -85,9 +85,9 @@ function lobbySelection() {
 
 function gameLobby(name1, name2, player) {
     if (player == 1) {
-        document.getElementById("content").innerHTML = "<div class=login-box><h1>Game lobby</h1><div class=dual><div class=halfFlex><span id=name1>" + name1 + "</span><button class=login-btn>Ready</button></div><div class=halfFlex><span id=name2>" + name2 + "</span><br><img class=readyImg src=notReady.png></div><div></div>"
+        document.getElementById("content").innerHTML = "<div class=login-box><h1>Game lobby</h1><div class=dual><div class=halfFlex><span id=name1>" + name1 + "</span><button id=readyCheckButton class=login-btn onclick=readyCheck(" + player + ")>Ready</button></div><div class=halfFlex><span id=name2>" + name2 + "</span><br><img class=readyImg src=notReady.png></div><div></div>"
     } else if (player == 2) {
-        
+        document.getElementById("content").innerHTML = "<div class=login-box><h1>Game lobby</h1><div class=dual><div class=halfFlex><span id=name1>" + name1 + "</span><br><img class=readyImg src=notReady.png></div><div class=halfFlex><span id=name2>" + name2 + "</span><br><button id=readyCheckButton class=login-btn onclick=readyCheck(" + player + ")>Ready</button></div><div></div>"
     }
 }
 
@@ -105,19 +105,28 @@ function joinGame(gameId) {
         xhttp = new XMLHttpRequest()
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
+                response = JSON.parse(this.responseText)
                 console.log(JSON.parse(this.responseText))
-                //gamesList = JSON.parse(this.responseText)
+                gameLobby(response.player1, playerName, 2)
             }
         }
         xhttp.open("POST", ip, true)
         xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-        xhttp.send(JSON.stringify({
-            joinGame: true,
-            name: gameId.name,
-            password: gameId.password,
-            player1: gameId.player1,
-            player2: playerName
-        }))
+        if(gameId.password == "no"){
+            xhttp.send(JSON.stringify({
+                joinGame: true,
+                name: gameId.name,
+                password: "",
+                playerName: playerName
+            }))
+        } else{
+            xhttp.send(JSON.stringify({
+                joinGame: true,
+                name: gameId.name,
+                password: prompt("Enter game password"),
+                playerName: playerName
+            }))
+        }
     } else {
         alert("You cannot connect to yourself.")
     }
