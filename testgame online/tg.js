@@ -76,6 +76,7 @@ function createGame(gameName, password) {
         playerName: playerName
     }))
     gameLobby(playerName, "Waiting for another player", 1)
+    window.gameName = gameName
 }
 
 function lobbySelection() {
@@ -85,10 +86,44 @@ function lobbySelection() {
 
 function gameLobby(name1, name2, player) {
     if (player == 1) {
-        document.getElementById("content").innerHTML = "<div class=login-box><h1>Game lobby</h1><div class=dual><div class=halfFlex><span id=name1>" + name1 + "</span><button id=readyCheckButton class=login-btn onclick=readyCheck(" + player + ")>Ready</button></div><div class=halfFlex><span id=name2>" + name2 + "</span><br><img class=readyImg src=notReady.png></div><div></div>"
+        document.getElementById("content").innerHTML = "<div class=login-box><h1>Game lobby</h1><div class=dual><div class=halfFlex><span id=name1>" + name1 + "</span><button id=readyCheckButton class=login-btn onclick=readyCheck(" + player + ")>Ready</button></div><div class=halfFlex><span id=name2>" + name2 + "</span><br><img id=readyImg class=readyImg src=notReady.png></div><div></div>"
     } else if (player == 2) {
-        document.getElementById("content").innerHTML = "<div class=login-box><h1>Game lobby</h1><div class=dual><div class=halfFlex><span id=name1>" + name1 + "</span><br><img class=readyImg src=notReady.png></div><div class=halfFlex><span id=name2>" + name2 + "</span><br><button id=readyCheckButton class=login-btn onclick=readyCheck(" + player + ")>Ready</button></div><div></div>"
+        document.getElementById("content").innerHTML = "<div class=login-box><h1>Game lobby</h1><div class=dual><div class=halfFlex><span id=name1>" + name1 + "</span><br><img id=readyImg class=readyImg src=notReady.png></div><div class=halfFlex><span id=name2>" + name2 + "</span><br><button id=readyCheckButton class=login-btn onclick=readyCheck(" + player + ")>Ready</button></div><div></div>"
     }
+
+    checkGameStatus = setInterval(() => {
+        xhttp = new XMLHttpRequest()
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                result = JSON.parse(this.responseText)
+                if(player = 1){
+                    if(!result.player2 == ""){
+                        document.getElementById("name2").innerHTML = result.player2
+                    }
+                    if(result.player2ready){
+                        document.getElementById("readyImg").src = "ready.png"
+                    } else{
+                        document.getElementById("readyImg").src = "notReady.png"
+                    }
+                }else{
+                    if(result.player1ready){
+                        document.getElementById("readyImg").src = "ready.png"
+                    }else{
+                        document.getElementById("readyImg").src = "notReady.png"
+                    }
+                }
+                if(result.gameStarted){
+                    clearInterval(checkGameStatus)
+                }
+            }
+        }
+        xhttp.open("POST", ip, true)
+        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+        xhttp.send(JSON.stringify({
+            checkGameStatus: true,
+            gameName: window.gameName
+        }))
+    }, 500);
 }
 
 function createGameMenu() {
@@ -105,9 +140,10 @@ function joinGame(gameId) {
         xhttp = new XMLHttpRequest()
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                response = JSON.parse(this.responseText)
+                result = JSON.parse(this.responseText)
                 console.log(JSON.parse(this.responseText))
-                gameLobby(response.player1, playerName, 2)
+                gameLobby(result.player1, playerName, 2)
+                window.gameName = gameId.name
             }
         }
         xhttp.open("POST", ip, true)
@@ -159,7 +195,7 @@ function connectOfficial(){
 }
 
 function connectCustom(){
-    if(document.getElementById("ipCache").value.startsWith("localhost") || document.getElementById("ipCache").value.startsWith("192")){
+    if(document.getElementById("ipCache").value.startsWith("localhost") || document.getElementById("ipCache").value.startsWith("192")){ //when connecting using a local network (not using HTTPS protocol)
         cacheIP = "http://" + document.getElementById("ipCache").value
     } else{
         cacheIP = "https://" + document.getElementById("ipCache").value 
@@ -191,4 +227,8 @@ function connectCustom(){
 
 function customConnectionSettings(){
     document.getElementById("content").innerHTML = "<div class=login-box><h1>Custom server IP</h1><br><input class=textbox placeholder=IP id=ipCache><br><button class=login-btn onclick=connectCustom()>Connect</button></div>"
+}
+
+function readyCheck(){
+    
 }
