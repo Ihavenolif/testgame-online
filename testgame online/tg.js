@@ -2,7 +2,9 @@ ip = ""
 playerName = ""
 gameName = ""
 password = ""
+player = null
 gamesList = null
+gameObj = {}
 function login() {
     playerName = document.getElementById("nick").value
     lobbySelection()
@@ -76,6 +78,7 @@ function createGame(gameName, password) {
         playerName: playerName
     }))
     gameLobby(playerName, "Waiting for another player", 1)
+    window.player = 1
     window.gameName = gameName
 }
 
@@ -86,9 +89,9 @@ function lobbySelection() {
 
 function gameLobby(name1, name2, player) {
     if (player == 1) {
-        document.getElementById("content").innerHTML = "<div class=login-box><h1>Game lobby</h1><div class=dual><div class=halfFlex><span id=name1>" + name1 + "</span><button id=readyCheckButton class=login-btn onclick=readyCheck(" + player + ")>Ready</button></div><div class=halfFlex><span id=name2>" + name2 + "</span><br><img id=readyImg class=readyImg src=notReady.png></div><div></div>"
+        document.getElementById("content").innerHTML = "<div class=login-box><h1>Game lobby</h1><div class=dual><div class=halfFlex><span id=name1>" + name1 + "</span><button id=readyCheckButton class=login-btn onclick=readyCheck(" + player + ")>Not Ready</button></div><div class=halfFlex><span id=name2>" + name2 + "</span><br><img id=readyImg class=readyImg src=notReady.png></div><div></div>"
     } else if (player == 2) {
-        document.getElementById("content").innerHTML = "<div class=login-box><h1>Game lobby</h1><div class=dual><div class=halfFlex><span id=name1>" + name1 + "</span><br><img id=readyImg class=readyImg src=notReady.png></div><div class=halfFlex><span id=name2>" + name2 + "</span><br><button id=readyCheckButton class=login-btn onclick=readyCheck(" + player + ")>Ready</button></div><div></div>"
+        document.getElementById("content").innerHTML = "<div class=login-box><h1>Game lobby</h1><div class=dual><div class=halfFlex><span id=name1>" + name1 + "</span><br><img id=readyImg class=readyImg src=notReady.png></div><div class=halfFlex><span id=name2>" + name2 + "</span><br><button id=readyCheckButton class=login-btn onclick=readyCheck(" + player + ")>Not Ready</button></div><div></div>"
     }
 
     checkGameStatus = setInterval(() => {
@@ -96,7 +99,7 @@ function gameLobby(name1, name2, player) {
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 result = JSON.parse(this.responseText)
-                if(player = 1){
+                if(player == 1){
                     if(!result.player2 == ""){
                         document.getElementById("name2").innerHTML = result.player2
                     }
@@ -114,6 +117,10 @@ function gameLobby(name1, name2, player) {
                 }
                 if(result.gameStarted){
                     clearInterval(checkGameStatus)
+                    createGameField()
+                    engineLoad()
+                    clearInterval(checkGameStatus)
+                    checkGameStatus = setInterval(game, 1000/60);
                 }
             }
         }
@@ -141,9 +148,10 @@ function joinGame(gameId) {
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 result = JSON.parse(this.responseText)
-                console.log(JSON.parse(this.responseText))
+                console.log(result)
                 gameLobby(result.player1, playerName, 2)
                 window.gameName = gameId.name
+                window.player = 2
             }
         }
         xhttp.open("POST", ip, true)
@@ -220,15 +228,115 @@ function connectCustom(){
     setTimeout(() => {
         if(!connectionSuccessful){
             alert("Connection failed")
-            document.getElementById("content").innerHTML = "<div class=login-box><h1>Choose a server</h1><div class=dual><div class=halfflex><button class=chooseOneBtn onclick=connectOfficial()>Connect to official servers</button></div><div class=halfflex><button class=chooseOneBtn onclick=connectCustom()>Connect to a custom server</button></div></div></div>"
+            document.getElementById("content").innerHTML = "<div class=login-box><h1>Choose a server</h1><div class=dual><div class=halfflex><button class=chooseOneBtn onclick=connectOfficial()>Connect to official servers</button></div><div class=halfflex><button class=chooseOneBtn onclick=customConnectionSettings()>Connect to a custom server</button></div></div></div>"
         }
     }, 10000);
 }
 
 function customConnectionSettings(){
-    document.getElementById("content").innerHTML = "<div class=login-box><h1>Custom server IP</h1><br><input class=textbox placeholder=IP id=ipCache><br><button class=login-btn onclick=connectCustom()>Connect</button></div>"
+    document.getElementById("content").innerHTML = "<div class=login-box><h1>Custom server IP</h1><br><input class=textbox placeholder=IP value=localhost:7000 id=ipCache><br><button class=login-btn onclick=connectCustom()>Connect</button></div>"
 }
 
 function readyCheck(){
+    if(document.getElementById("readyCheckButton").innerHTML == "Ready"){
+        document.getElementById("readyCheckButton").innerHTML = "Not Ready"
+    } else{
+        document.getElementById("readyCheckButton").innerHTML = "Ready"
+    }
+    xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            if(player == 1){
+                if(result.player2ready){
+                    document.getElementById("readyImg").src = "ready.png"
+                } else{
+                    document.getElementById("readyImg").src = "notReady.png"
+                }
+            }else{
+                if(result.player1ready){
+                    document.getElementById("readyImg").src = "ready.png"
+                }else{
+                    document.getElementById("readyImg").src = "notReady.png"
+                }
+            }
+        }
+    }
+    xhttp.open("POST", ip, true)
+    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+    xhttp.send(JSON.stringify({
+        readyCheck: true,
+        name: window.gameName,
+        player: window.player
+    }))
+}
+
+function createGameField(){
+    document.getElementById("content").innerHTML = "<canvas id=canv></canvas>"
+}
+
+function game(){
+    console.log(window.left)
+    xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            gameObj = JSON.parse(this.responseText)
+        }
+    }
+    xhttp.open("POST", ip, true)
+    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+    xhttp.send(JSON.stringify({
+        game: true,
+        name: window.gameName,
+        player: window.player,
+        left: window.left,
+        up: window.up,
+        right: window.right,
+        down: window.down,
+        ctrl: window.ctrl,
+        shift: window.shift,
+        space: window.space
+    }))
+
+    draw()
+}
+
+function draw(){
+    if(window.player == 1){
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, 700, 700);
+        ctx.beginPath();
+        ctx.moveTo(gameObj.player1.xpos + 30, canv.height);
+        ctx.lineTo(gameObj.player1.xpos, canv.height - 50);
+        ctx.lineTo(gameObj.player1.xpos - 30, canv.height);
+        ctx.lineTo(gameObj.player1.xpos + 30, canv.height);
+        ctx.closePath();
+        ctx.fillStyle = "#4caf50";
+        ctx.fill();
+
+        ctx.beginPath()
+        ctx.moveTo(gameObj.player2.xpos - 30, 0)
+        ctx.lineTo(gameObj.player2.xpos, 50)
+        ctx.lineTo(gameObj.player2.xpos + 30, 0)
+        ctx.lineTo(gameObj.player2.xpos - 30, 0)
+        ctx.fill()
+    }else{
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, 700, 700);
+        ctx.beginPath();
+        ctx.moveTo(gameObj.player2.xpos + 30, canv.height);
+        ctx.lineTo(gameObj.player2.xpos, canv.height - 50);
+        ctx.lineTo(gameObj.player2.xpos - 30, canv.height);
+        ctx.lineTo(gameObj.player2.xpos + 30, canv.height);
+        ctx.closePath();
+        ctx.fillStyle = "#4caf50";
+        ctx.fill();
+
+        ctx.beginPath()
+        ctx.moveTo(gameObj.player1.xpos - 30, 0)
+        ctx.lineTo(gameObj.player1.xpos, 50)
+        ctx.lineTo(gameObj.player1.xpos + 30, 0)
+        ctx.lineTo(gameObj.player1.xpos - 30, 0)
+        ctx.fill()
+    }
     
 }
