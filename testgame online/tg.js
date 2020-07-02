@@ -301,7 +301,11 @@ function game(){
 }
 
 function draw(){
+    
     if(window.player == 1){
+        /*
+        ---PLAYER DRAWING - P1---
+        */
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, 700, 700);
         ctx.beginPath();
@@ -319,7 +323,21 @@ function draw(){
         ctx.lineTo(gameObj.player2.xpos + 30, 0)
         ctx.lineTo(gameObj.player2.xpos - 30, 0)
         ctx.fill()
+        /*
+        ---SHOT DRAWING - P1---
+        */
+        for (index of gameObj.player1.shots) {
+            ctx.fillStyle = "red";
+            ctx.fillRect(index.xpos - gameObj.player1.bulletWidth / 2, index.ypos, gameObj.player1.bulletWidth, 20);
+        }
+        for (index of gameObj.player2.shots) {
+            ctx.fillStyle = "red";
+            ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos, index.width, 20);
+        }
     }else{
+        /*
+        ---PLAYER DRAWING - P2---
+        */
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, 700, 700);
         ctx.beginPath();
@@ -337,6 +355,20 @@ function draw(){
         ctx.lineTo(gameObj.player1.xpos + 30, 0)
         ctx.lineTo(gameObj.player1.xpos - 30, 0)
         ctx.fill()
+        /*
+        ---SHOT DRAWING - P2---
+        */
+        for (index of gameObj.player2.shots) {
+            ctx.fillStyle = "red";
+            ctx.fillRect(index.xpos - gameObj.player2.bulletWidth / 2, index.ypos, gameObj.player2.bulletWidth, 20);
+        }
+        for (index of gameObj.player1.shots) {
+            ctx.fillStyle = "red";
+            ctx.fillRect(index.xpos - gameObj.player1.bulletWidth / 2, 700 - index.ypos, gameObj.player1.bulletWidth, 20);
+        }
     }
+    /*
+    ---SHOT DRAWING---
+    */
     
 }
