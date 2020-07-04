@@ -5,6 +5,7 @@ password = ""
 player = null
 gamesList = null
 gameObj = {}
+
 function login() {
     playerName = document.getElementById("nick").value
     lobbySelection()
@@ -271,7 +272,7 @@ function readyCheck(){
 }
 
 function createGameField(){
-    document.getElementById("content").innerHTML = "<canvas id=canv></canvas>"
+    document.getElementById("content").innerHTML = "<div><span class=text id=money>Money: 0</span><span class=text id=health>Health: 100</span></div><canvas id=canv></canvas>"
 }
 
 function game(){
@@ -297,6 +298,7 @@ function game(){
         space: window.space
     }))
 
+    document.getElementById("money").innerHTML = player == 1 ? Math.floor(gameObj.player1.money) : Math.floor(gameObj.player2.money)
     draw()
 }
 
