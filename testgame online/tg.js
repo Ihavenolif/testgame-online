@@ -257,7 +257,15 @@ function readyCheck(){
 }
 
 function createGameField(){
-    document.getElementById("content").innerHTML = "<div><span class=text id=money>Money: 0</span><span class=text id=health>Health: 100</span></div><canvas id=canv></canvas>"
+    document.getElementById("content").innerHTML = "<div><span class=text id=money>Money: 0</span><span class=text id=health>Health: 100</span></div><canvas id=canv></canvas><div id=soldierSpawnAbilities><div class=inline onclick=yellowSoldierSpawn()><img src=yellowSoldierSpawn.png></div>"
+}
+
+function yellowSoldierSpawn(){
+    ws.send(JSON.stringify({
+        request: "yellowSoldierSpawn",
+        name: window.gameName,
+        player: window.player
+    }))
 }
 
 function game(){
@@ -275,7 +283,8 @@ function game(){
         }
     ))
 
-    document.getElementById("money").innerHTML = player == 1 ? Math.floor(gameObj.player1.money) : Math.floor(gameObj.player2.money)
+    document.getElementById("money").innerHTML = player == 1 ? "Money: " + Math.floor(gameObj.player1.money) : "Money: " + Math.floor(gameObj.player2.money)
+    document.getElementById("health").innerHTML = player == 1 ? "Health: " + gameObj.player1.health : "Health: " + gameObj.player2.health
     draw()
 }
 
@@ -307,11 +316,28 @@ function draw(){
         */
         for (index of gameObj.player1.shots) {
             ctx.fillStyle = "red";
-            ctx.fillRect(index.xpos - gameObj.player1.bulletWidth / 2, index.ypos, gameObj.player1.bulletWidth, 20);
+            ctx.fillRect(index.xpos - index.width / 2, index.ypos - 10, index.width, 20);
         }
         for (index of gameObj.player2.shots) {
             ctx.fillStyle = "red";
-            ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos, index.width, 20);
+            ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos + 10, index.width, 20);
+        }
+        /*
+        ---SOLDIER DRAWING P1---
+        */
+        for (index of gameObj.player1.soldiers){
+            switch (index.type){
+                case "yellow":
+                    ctx.fillStyle = "yellow";
+                    ctx.fillRect(index.xpos - index.width / 2, index.ypos - index.height / 2, index.width, index.height);
+            }
+        }
+        for (index of gameObj.player2.soldiers){
+            switch (index.type){
+                case "yellow":
+                    ctx.fillStyle = "yellow";
+                    ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos - index.height / 2, index.width, index.height);
+            }
         }
     }else{
         /*
@@ -344,6 +370,23 @@ function draw(){
         for (index of gameObj.player1.shots) {
             ctx.fillStyle = "red";
             ctx.fillRect(index.xpos - gameObj.player1.bulletWidth / 2, 700 - index.ypos, gameObj.player1.bulletWidth, 20);
+        }
+        /*
+        ---SOLDIER DRAWING - P2---
+        */
+        for (index of gameObj.player2.soldiers){
+            switch (index.type){
+                case "yellow":
+                    ctx.fillStyle = "yellow";
+                    ctx.fillRect(index.xpos - index.width / 2, index.ypos - index.height / 2, index.width, index.height);
+            }
+        }
+        for (index of gameObj.player1.soldiers){
+            switch (index.type){
+                case "yellow":
+                    ctx.fillStyle = "yellow";
+                    ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos - index.height / 2, index.width, index.height);
+            }
         }
     }
     /*
