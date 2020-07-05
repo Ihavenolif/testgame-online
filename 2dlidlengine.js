@@ -64,6 +64,9 @@ function keyDown(evt) {
     case 16:
       shift = true
       break
+    case 49:
+      yellowSoldierSpawn()
+      break
   }
 }
 
