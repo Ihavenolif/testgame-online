@@ -257,12 +257,20 @@ function readyCheck(){
 }
 
 function createGameField(){
-    document.getElementById("content").innerHTML = "<div><span class=text id=money>Money: 0</span><span class=text id=health>Health: 100</span></div><canvas id=canv></canvas><div id=soldierSpawnAbilities><div class=inline onclick=yellowSoldierSpawn()><img src=yellowSoldierSpawn.png></div>"
+    document.getElementById("content").innerHTML = "<div><span class=text id=money>Money: 0</span><span class=text id=health>Health: 100</span></div><canvas id=canv></canvas><div id=soldierSpawnAbilities><div class=inline onclick=yellowSoldierSpawn()><img src=yellowSoldierSpawn.png></div><div class=inline onclick=blueSoldierSpawn()><img src=blueSoldierSpawn.png></div>"
 }
 
 function yellowSoldierSpawn(){
     ws.send(JSON.stringify({
         request: "yellowSoldierSpawn",
+        name: window.gameName,
+        player: window.player
+    }))
+}
+
+function blueSoldierSpawn(){
+    ws.send(JSON.stringify({
+        request: "blueSoldierSpawn",
         name: window.gameName,
         player: window.player
     }))
@@ -330,6 +338,11 @@ function draw(){
                 case "yellow":
                     ctx.fillStyle = "yellow";
                     ctx.fillRect(index.xpos - index.width / 2, index.ypos - index.height / 2, index.width, index.height);
+                    break
+                case "blue":
+                    ctx.fillStyle = "blue";
+                    ctx.fillRect(index.xpos - index.width / 2, index.ypos - index.height / 2, index.width, index.height);
+                    break
             }
         }
         for (index of gameObj.player2.soldiers){
@@ -337,6 +350,11 @@ function draw(){
                 case "yellow":
                     ctx.fillStyle = "yellow";
                     ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos - index.height / 2, index.width, index.height);
+                    break
+                case "blue":
+                    ctx.fillStyle = "blue";
+                    ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos - index.height / 2, index.width, index.height);
+                    break
             }
         }
     }else{
@@ -379,6 +397,11 @@ function draw(){
                 case "yellow":
                     ctx.fillStyle = "yellow";
                     ctx.fillRect(index.xpos - index.width / 2, index.ypos - index.height / 2, index.width, index.height);
+                    break
+                case "blue":
+                    ctx.fillStyle = "blue";
+                    ctx.fillRect(index.xpos - index.width / 2, index.ypos - index.height / 2, index.width, index.height);
+                    break
             }
         }
         for (index of gameObj.player1.soldiers){
@@ -386,6 +409,11 @@ function draw(){
                 case "yellow":
                     ctx.fillStyle = "yellow";
                     ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos - index.height / 2, index.width, index.height);
+                    break
+                case "blue":
+                    ctx.fillStyle = "blue";
+                    ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos - index.height / 2, index.width, index.height);
+                    break
             }
         }
     }

@@ -67,6 +67,9 @@ function keyDown(evt) {
     case 49:
       yellowSoldierSpawn()
       break
+    case 50:
+      blueSoldierSpawn()
+      break
   }
 }
 
