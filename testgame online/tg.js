@@ -8,10 +8,10 @@ gameObj = {}
 
 ws = null
 
-function serverInputHandler(evt){ 
+function serverInputHandler(evt) {
     console.log(evt.data)
     input = JSON.parse(evt.data)
-    switch(input.request){
+    switch (input.request) {
         case "loginSuccessful":
             console.log(input.message)
             window.connectionSuccessful = true
@@ -22,7 +22,7 @@ function serverInputHandler(evt){
             table.innerHTML = "<tr><td class=gameName>Game name</td><td class=leaderName>Leader name</td><td class=password>Password</td><td class=joinButton></td></tr>"
             i = 1
             for (x in gamesList) {
-                if(x == "request") continue
+                if (x == "request") continue
                 ii = 0
                 row = table.insertRow(i++)
                 row.insertCell(ii++).innerHTML = x
@@ -32,11 +32,11 @@ function serverInputHandler(evt){
             }
             break
         case "createGame":
-            if(input.request == "createGame"){
+            if (input.request == "createGame") {
                 gameLobby(playerName, "Waiting for another player", 1)
                 window.player = 1
                 window.gameName = input.gameName
-            } else{
+            } else {
                 alert("Game already exists!")
             }
             break
@@ -47,41 +47,41 @@ function serverInputHandler(evt){
             window.player = 2
             break
         case "checkGameStatus":
-            if(player == 1){
-                if(!input.player2 == ""){
+            if (player == 1) {
+                if (!input.player2 == "") {
                     document.getElementById("name2").innerHTML = input.player2
                 }
-                if(input.player2ready){
+                if (input.player2ready) {
                     document.getElementById("readyImg").src = "ready.png"
-                } else{
+                } else {
                     document.getElementById("readyImg").src = "notReady.png"
                 }
-            }else{
-                if(input.player1ready){
+            } else {
+                if (input.player1ready) {
                     document.getElementById("readyImg").src = "ready.png"
-                }else{
+                } else {
                     document.getElementById("readyImg").src = "notReady.png"
                 }
             }
-            if(input.gameStarted){
+            if (input.gameStarted) {
                 clearInterval(checkGameStatus)
                 createGameField()
                 engineLoad()
                 clearInterval(checkGameStatus)
-                checkGameStatus = setInterval(game, 1000/60);
+                checkGameStatus = setInterval(game, 1000 / 60);
             }
             break
         case "readyCheck":
-            if(player == 1){
-                if(input.player2ready){
+            if (player == 1) {
+                if (input.player2ready) {
                     document.getElementById("readyImg").src = "ready.png"
-                } else{
+                } else {
                     document.getElementById("readyImg").src = "notReady.png"
                 }
-            }else{
-                if(input.player1ready){
+            } else {
+                if (input.player1ready) {
                     document.getElementById("readyImg").src = "ready.png"
-                }else{
+                } else {
                     document.getElementById("readyImg").src = "notReady.png"
                 }
             }
@@ -92,7 +92,7 @@ function serverInputHandler(evt){
     }
 }
 
-function selectServer(){
+function selectServer() {
     document.getElementById("content").innerHTML = "<div class=login-box><h1>Choose a server</h1><div class=dual><div class=halfflex><button class=chooseOneBtn onclick=connectOfficial()>Connect to official servers</button></div><div class=halfflex><button class=chooseOneBtn onclick=customConnectionSettings()>Connect to a custom server</button></div></div></div>"
 }
 
@@ -119,23 +119,14 @@ function getGamesList() {
 }
 
 function createGame(gameName, password) {
-    // REPLACING " " WITH "-"
-    y = "" 
-    for (x of gameName) {
-        if (x == " ") {
-            y += "-"
-        } else {
-            y += x
-        }
-    }
-    gameName = y
+    gameName = gameName.replace(" ", "-")
     ws.send(JSON.stringify({
         request: "createGame",
         gameName: gameName,
         password: password,
         playerName: playerName
     }))
-    
+
 }
 
 function lobbySelection() {
@@ -170,14 +161,14 @@ function getCreateGameValues() {
 
 function joinGame(gameId) {
     if (playerName != gameId.player1) {
-        if(gameId.password == "no"){
+        if (gameId.password == "no") {
             ws.send(JSON.stringify({
                 request: "joinGame",
                 name: gameId.name,
                 password: "",
                 playerName: playerName
             }))
-        } else{
+        } else {
             ws.send(JSON.stringify({
                 request: "joinGame",
                 name: gameId.name,
@@ -190,7 +181,7 @@ function joinGame(gameId) {
     }
 }
 
-function connectOfficial(){
+function connectOfficial() {
     connectionSuccessful = false
 
     window.ws = new WebSocket("https://testgame-server.herokuapp.com/")
@@ -206,21 +197,21 @@ function connectOfficial(){
     ws.onmessage = (evt) => { serverInputHandler(evt) }
 
     setTimeout(() => {
-        if(!connectionSuccessful){
+        if (!connectionSuccessful) {
             alert("Connection failed")
             document.getElementById("content").innerHTML = "<div class=login-box><h1>Choose a server</h1><div class=dual><div class=halfflex><button class=chooseOneBtn onclick=connectOfficial()>Connect to official servers</button></div><div class=halfflex><button class=chooseOneBtn onclick=connectCustom()>Connect to a custom server</button></div></div></div>"
         }
     }, 10000);
 }
 
-function connectCustom(){
-    if(document.getElementById("ipCache").value.startsWith("localhost") || document.getElementById("ipCache").value.startsWith("192")){ //when connecting using a local network (not using WSS protocol)
+function connectCustom() {
+    if (document.getElementById("ipCache").value.startsWith("localhost") || document.getElementById("ipCache").value.startsWith("192")) { //when connecting using a local network (not using WSS protocol)
         cacheIP = "ws://" + document.getElementById("ipCache").value
-    } else{
-        cacheIP = "wss://" + document.getElementById("ipCache").value 
+    } else {
+        cacheIP = "wss://" + document.getElementById("ipCache").value
     }
     window.connectionSuccessful = false
-    
+
     window.ws = new WebSocket(cacheIP)
     ws.onclose = () => { alert("Connection lost!") }
     ws.onopen = () => {
@@ -232,21 +223,21 @@ function connectCustom(){
     ws.onmessage = (evt) => { serverInputHandler(evt) }
 
     setTimeout(() => {
-        if(!window.connectionSuccessful){
+        if (!window.connectionSuccessful) {
             alert("Connection failed")
             document.getElementById("content").innerHTML = "<div class=login-box><h1>Choose a server</h1><div class=dual><div class=halfflex><button class=chooseOneBtn onclick=connectOfficial()>Connect to official servers</button></div><div class=halfflex><button class=chooseOneBtn onclick=customConnectionSettings()>Connect to a custom server</button></div></div></div>"
         }
     }, 10000);
 }
 
-function customConnectionSettings(){
+function customConnectionSettings() {
     document.getElementById("content").innerHTML = "<div class=login-box><h1>Custom server IP</h1><br><input class=textbox placeholder=IP value=localhost:7000 id=ipCache><br><button class=login-btn onclick=connectCustom()>Connect</button></div>"
 }
 
-function readyCheck(){
-    if(document.getElementById("readyCheckButton").innerHTML == "Ready"){
+function readyCheck() {
+    if (document.getElementById("readyCheckButton").innerHTML == "Ready") {
         document.getElementById("readyCheckButton").innerHTML = "Not Ready"
-    } else{
+    } else {
         document.getElementById("readyCheckButton").innerHTML = "Ready"
     }
     ws.send(JSON.stringify({
@@ -256,11 +247,11 @@ function readyCheck(){
     }))
 }
 
-function createGameField(){
+function createGameField() {
     document.getElementById("content").innerHTML = "<div><span class=text id=money>Money: 0</span><span class=text id=health>Health: 100</span></div><canvas id=canv></canvas><div id=soldierSpawnAbilities><div class=inline onclick=yellowSoldierSpawn()><img src=yellowSoldierSpawn.png></div><div class=inline onclick=blueSoldierSpawn()><img src=blueSoldierSpawn.png></div>"
 }
 
-function yellowSoldierSpawn(){
+function yellowSoldierSpawn() {
     ws.send(JSON.stringify({
         request: "yellowSoldierSpawn",
         name: window.gameName,
@@ -268,7 +259,7 @@ function yellowSoldierSpawn(){
     }))
 }
 
-function blueSoldierSpawn(){
+function blueSoldierSpawn() {
     ws.send(JSON.stringify({
         request: "blueSoldierSpawn",
         name: window.gameName,
@@ -276,19 +267,19 @@ function blueSoldierSpawn(){
     }))
 }
 
-function game(){
+function game() {
     ws.send(JSON.stringify({
-            request: "game",
-            name: window.gameName,
-            player: window.player,
-            left: window.left,
-            up: window.up,
-            right: window.right,
-            down: window.down,
-            ctrl: window.ctrl,
-            shift: window.shift,
-            space: window.space
-        }
+        request: "game",
+        name: window.gameName,
+        player: window.player,
+        left: window.left,
+        up: window.up,
+        right: window.right,
+        down: window.down,
+        ctrl: window.ctrl,
+        shift: window.shift,
+        space: window.space
+    }
     ))
 
     document.getElementById("money").innerHTML = player == 1 ? "Money: " + Math.floor(gameObj.player1.money) : "Money: " + Math.floor(gameObj.player2.money)
@@ -296,9 +287,9 @@ function game(){
     draw()
 }
 
-function draw(){
-    
-    if(window.player == 1){
+function draw() {
+
+    if (window.player == 1) {
         /*
         ---PLAYER DRAWING - P1---
         */
@@ -333,8 +324,8 @@ function draw(){
         /*
         ---SOLDIER DRAWING P1---
         */
-        for (index of gameObj.player1.soldiers){
-            switch (index.type){
+        for (index of gameObj.player1.soldiers) {
+            switch (index.type) {
                 case "yellow":
                     ctx.fillStyle = "yellow";
                     ctx.fillRect(index.xpos - index.width / 2, index.ypos - index.height / 2, index.width, index.height);
@@ -345,8 +336,8 @@ function draw(){
                     break
             }
         }
-        for (index of gameObj.player2.soldiers){
-            switch (index.type){
+        for (index of gameObj.player2.soldiers) {
+            switch (index.type) {
                 case "yellow":
                     ctx.fillStyle = "yellow";
                     ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos - index.height / 2, index.width, index.height);
@@ -357,7 +348,24 @@ function draw(){
                     break
             }
         }
-    }else{
+        /*
+        ---SCOPE DRAWING P1---
+        */
+        if (gameObj.player1.scope) {
+            ctx.strokeStyle = "#fcba03";
+            ctx.beginPath();
+            ctx.moveTo(gameObj.player1.xpos, 670)
+            ctx.lineTo(gameObj.player1.xpos, 0)
+            ctx.stroke();
+        }
+        if (gameObj.player2.scope) {
+            ctx.strokeStyle = "#fcba03";
+            ctx.beginPath();
+            ctx.moveTo(gameObj.player2.xpos, 670)
+            ctx.lineTo(gameObj.player2.xpos, 0)
+            ctx.stroke();
+        }
+    } else {
         /*
         ---PLAYER DRAWING - P2---
         */
@@ -392,8 +400,8 @@ function draw(){
         /*
         ---SOLDIER DRAWING - P2---
         */
-        for (index of gameObj.player2.soldiers){
-            switch (index.type){
+        for (index of gameObj.player2.soldiers) {
+            switch (index.type) {
                 case "yellow":
                     ctx.fillStyle = "yellow";
                     ctx.fillRect(index.xpos - index.width / 2, index.ypos - index.height / 2, index.width, index.height);
@@ -404,8 +412,8 @@ function draw(){
                     break
             }
         }
-        for (index of gameObj.player1.soldiers){
-            switch (index.type){
+        for (index of gameObj.player1.soldiers) {
+            switch (index.type) {
                 case "yellow":
                     ctx.fillStyle = "yellow";
                     ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos - index.height / 2, index.width, index.height);
@@ -415,10 +423,23 @@ function draw(){
                     ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos - index.height / 2, index.width, index.height);
                     break
             }
+        }
+        /*
+        ---SCOPE DRAWING P2---
+        */
+        if (gameObj.player2.scope) {
+            ctx.strokeStyle = "#fcba03";
+            ctx.beginPath();
+            ctx.moveTo(gameObj.player1.xpos, 670)
+            ctx.lineTo(gameObj.player1.xpos, 0)
+            ctx.stroke();
+        }
+        if (gameObj.player1.scope) {
+            ctx.strokeStyle = "#fcba03";
+            ctx.beginPath();
+            ctx.moveTo(gameObj.player2.xpos, 670)
+            ctx.lineTo(gameObj.player2.xpos, 0)
+            ctx.stroke();
         }
     }
-    /*
-    ---SHOT DRAWING---
-    */
-    
 }
