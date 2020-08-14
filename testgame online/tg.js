@@ -73,12 +73,22 @@ function serverInputHandler(evt) {
             break
         case "readyCheck":
             if (player == 1) {
+                if(input.player1ready){
+                    document.getElementById("readyCheckButton").innerHTML = "Ready"
+                }else{
+                    document.getElementById("readyCheckButton").innerHTML = "Not Ready"
+                }
                 if (input.player2ready) {
                     document.getElementById("readyImg").src = "ready.png"
                 } else {
                     document.getElementById("readyImg").src = "notReady.png"
                 }
             } else {
+                if(input.player2ready){
+                    document.getElementById("readyCheckButton").innerHTML = "Ready"
+                }else{
+                    document.getElementById("readyCheckButton").innerHTML = "Not Ready"
+                }
                 if (input.player1ready) {
                     document.getElementById("readyImg").src = "ready.png"
                 } else {
@@ -235,11 +245,11 @@ function customConnectionSettings() {
 }
 
 function readyCheck() {
-    if (document.getElementById("readyCheckButton").innerHTML == "Ready") {
+    /*if (document.getElementById("readyCheckButton").innerHTML == "Ready") {
         document.getElementById("readyCheckButton").innerHTML = "Not Ready"
     } else {
         document.getElementById("readyCheckButton").innerHTML = "Ready"
-    }
+    }*/
     ws.send(JSON.stringify({
         request: "readyCheck",
         name: window.gameName,
@@ -361,8 +371,8 @@ function draw() {
         if (gameObj.player2.scope) {
             ctx.strokeStyle = "#fcba03";
             ctx.beginPath();
-            ctx.moveTo(gameObj.player2.xpos, 670)
-            ctx.lineTo(gameObj.player2.xpos, 0)
+            ctx.moveTo(gameObj.player2.xpos, 700)
+            ctx.lineTo(gameObj.player2.xpos, 30)
             ctx.stroke();
         }
     } else {
@@ -430,8 +440,8 @@ function draw() {
         if (gameObj.player2.scope) {
             ctx.strokeStyle = "#fcba03";
             ctx.beginPath();
-            ctx.moveTo(gameObj.player1.xpos, 670)
-            ctx.lineTo(gameObj.player1.xpos, 0)
+            ctx.moveTo(gameObj.player1.xpos, 700)
+            ctx.lineTo(gameObj.player1.xpos, 30)
             ctx.stroke();
         }
         if (gameObj.player1.scope) {
