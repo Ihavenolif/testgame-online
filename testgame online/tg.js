@@ -194,9 +194,9 @@ function joinGame(gameId) {
 function connectOfficial() {
     connectionSuccessful = false
 
-    window.ws = new WebSocket("https://testgame-server.herokuapp.com/")
+    window.ws = new WebSocket("wss://testgame-server.herokuapp.com/")
     ws.onopen = () => {
-        ip = "https://testgame-server.herokuapp.com/"
+        ip = "wss://testgame-server.herokuapp.com/"
         ws.send(JSON.stringify({
             request: "login",
             playerName: window.playerName
