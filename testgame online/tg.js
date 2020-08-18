@@ -5,17 +5,21 @@ password = ""
 player = null
 gamesList = null
 gameObj = {}
+gameObj.player1 = {xpos: 350}
+gameObj.player2 = {xpos: 350}
 
 ws = null
 
 function serverInputHandler(evt) {
-    console.log(evt.data)
     input = JSON.parse(evt.data)
     switch (input.request) {
         case "loginSuccessful":
-            console.log(input.message)
-            window.connectionSuccessful = true
             lobbySelection()
+            break
+        case "nameAlreadyExists":
+            window.playerName = ""
+            nameSelection()
+            alert("Name already exists!")
             break
         case "gamesList":
             gamesList = input
@@ -67,8 +71,7 @@ function serverInputHandler(evt) {
                 clearInterval(checkGameStatus)
                 createGameField()
                 engineLoad()
-                clearInterval(checkGameStatus)
-                checkGameStatus = setInterval(game, 1000 / 60);
+                checkGameStatus = setInterval(game, 1000 / 60); 
             }
             break
         case "readyCheck":
@@ -97,9 +100,45 @@ function serverInputHandler(evt) {
             }
             break
         case "game":
-            gameObj = input
+            //gameObj = input
+            if(input != undefined){
+                if(input.player1.xpos != undefined){
+                    window.gameObj.player1.xpos = input.player1.xpos
+                }
+                if(input.player2.xpos != undefined){
+                    window.gameObj.player2.xpos = input.player2.xpos
+                }
+                if(input.player1.shots != undefined){
+                    window.gameObj.player1.shots = input.player1.shots
+                }
+                if(input.player2.shots != undefined){
+                    window.gameObj.player2.shots = input.player2.shots
+                }
+                if(input.player1.soldiers != undefined){
+                    window.gameObj.player1.soldiers = input.player1.soldiers
+                }
+                if(input.player2.soldiers != undefined){
+                    window.gameObj.player2.soldiers = input.player2.soldiers
+                }
+                if(input.player1.money != undefined){
+                    window.gameObj.player1.money = input.player1.money
+                }
+                if(input.player2.money != undefined){
+                    window.gameObj.player2.money = input.player2.money
+                }
+                if(input.player1.health != undefined){
+                    window.gameObj.player1.health = input.player1.health
+                }
+                if(input.player2.health != undefined){
+                    window.gameObj.player2.health = input.player2.health
+                }
+            }
             break
     }
+}
+
+function nameSelection (){
+    document.getElementById("content").innerHTML = "<div class=login-box><h1>TESTGAME ONLINE</h1><input class=\"textbox\" placeholder=\"Nickname\" id=\"nick\"><br><button class=\"login-btn\" onclick=\"login()\">Login</button><div>"
 }
 
 function selectServer() {
@@ -109,17 +148,6 @@ function selectServer() {
 function login() {
     playerName = document.getElementById("nick").value
     selectServer()
-}
-
-function draw() {
-    ctx.beginPath();
-    ctx.moveTo(xpos + 30, canv.height);
-    ctx.lineTo(xpos, canv.width - 50);
-    ctx.lineTo(xpos - 30, canv.height);
-    ctx.lineTo(xpos + 30, canv.height);
-    ctx.closePath();
-    ctx.fillStyle = "#4caf50";
-    ctx.fill();
 }
 
 function getGamesList() {
@@ -192,8 +220,6 @@ function joinGame(gameId) {
 }
 
 function connectOfficial() {
-    connectionSuccessful = false
-
     window.ws = new WebSocket("wss://testgame-server.herokuapp.com/")
     ws.onopen = () => {
         ip = "wss://testgame-server.herokuapp.com/"
@@ -205,13 +231,6 @@ function connectOfficial() {
 
     ws.onclose = () => { alert("Connection lost!") }
     ws.onmessage = (evt) => { serverInputHandler(evt) }
-
-    setTimeout(() => {
-        if (!connectionSuccessful) {
-            alert("Connection failed")
-            document.getElementById("content").innerHTML = "<div class=login-box><h1>Choose a server</h1><div class=dual><div class=halfflex><button class=chooseOneBtn onclick=connectOfficial()>Connect to official servers</button></div><div class=halfflex><button class=chooseOneBtn onclick=connectCustom()>Connect to a custom server</button></div></div></div>"
-        }
-    }, 10000);
 }
 
 function connectCustom() {
@@ -220,7 +239,6 @@ function connectCustom() {
     } else {
         cacheIP = "wss://" + document.getElementById("ipCache").value
     }
-    window.connectionSuccessful = false
 
     window.ws = new WebSocket(cacheIP)
     ws.onclose = () => { alert("Connection lost!") }
@@ -231,13 +249,6 @@ function connectCustom() {
         }))
     }
     ws.onmessage = (evt) => { serverInputHandler(evt) }
-
-    setTimeout(() => {
-        if (!window.connectionSuccessful) {
-            alert("Connection failed")
-            document.getElementById("content").innerHTML = "<div class=login-box><h1>Choose a server</h1><div class=dual><div class=halfflex><button class=chooseOneBtn onclick=connectOfficial()>Connect to official servers</button></div><div class=halfflex><button class=chooseOneBtn onclick=customConnectionSettings()>Connect to a custom server</button></div></div></div>"
-        }
-    }, 10000);
 }
 
 function customConnectionSettings() {
@@ -245,11 +256,6 @@ function customConnectionSettings() {
 }
 
 function readyCheck() {
-    /*if (document.getElementById("readyCheckButton").innerHTML == "Ready") {
-        document.getElementById("readyCheckButton").innerHTML = "Not Ready"
-    } else {
-        document.getElementById("readyCheckButton").innerHTML = "Ready"
-    }*/
     ws.send(JSON.stringify({
         request: "readyCheck",
         name: window.gameName,
@@ -291,13 +297,12 @@ function game() {
         space: window.space
     }
     ))
-
-    document.getElementById("money").innerHTML = player == 1 ? "Money: " + Math.floor(gameObj.player1.money) : "Money: " + Math.floor(gameObj.player2.money)
-    document.getElementById("health").innerHTML = player == 1 ? "Health: " + gameObj.player1.health : "Health: " + gameObj.player2.health
     draw()
 }
 
 function draw() {
+    document.getElementById("money").innerHTML = player == 1 ? "Money: " + Math.floor(gameObj.player1.money) : "Money: " + Math.floor(gameObj.player2.money)
+    document.getElementById("health").innerHTML = player == 1 ? "Health: " + gameObj.player1.health : "Health: " + gameObj.player2.health
 
     if (window.player == 1) {
         /*
@@ -401,11 +406,11 @@ function draw() {
         */
         for (index of gameObj.player2.shots) {
             ctx.fillStyle = "red";
-            ctx.fillRect(index.xpos - gameObj.player2.bulletWidth / 2, index.ypos, gameObj.player2.bulletWidth, 20);
+            ctx.fillRect(index.xpos - index.width / 2, index.ypos, index.width, 20);
         }
         for (index of gameObj.player1.shots) {
             ctx.fillStyle = "red";
-            ctx.fillRect(index.xpos - gameObj.player1.bulletWidth / 2, 700 - index.ypos, gameObj.player1.bulletWidth, 20);
+            ctx.fillRect(index.xpos - index.width / 2, 700 - index.ypos, index.width, 20);
         }
         /*
         ---SOLDIER DRAWING - P2---
@@ -437,14 +442,14 @@ function draw() {
         /*
         ---SCOPE DRAWING P2---
         */
-        if (gameObj.player2.scope) {
+        if (true) {
             ctx.strokeStyle = "#fcba03";
             ctx.beginPath();
             ctx.moveTo(gameObj.player1.xpos, 700)
             ctx.lineTo(gameObj.player1.xpos, 30)
             ctx.stroke();
         }
-        if (gameObj.player1.scope) {
+        if (true) {
             ctx.strokeStyle = "#fcba03";
             ctx.beginPath();
             ctx.moveTo(gameObj.player2.xpos, 670)

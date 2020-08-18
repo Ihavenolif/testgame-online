@@ -38,30 +38,47 @@ function engineLoad(){
   window.space = false 
 }
 
+function wsSendKeyInfo(pressed, key){
+  ws.send(JSON.stringify({
+    gameName: gameName,
+    player: player,
+    request: "buttonPress",
+    pressed: pressed,
+    button: key
+  }))
+}
+
 function keyDown(evt) {
   switch (evt.keyCode) {
     case 32:
+      wsSendKeyInfo(true, "space")
       space = true;
       break;
     case 37:
+      wsSendKeyInfo(true, "left")
       left = true;
       break;
     case 38:
+      wsSendKeyInfo(true, "up")
       up = true;
       break;
     case 39:
+      wsSendKeyInfo(true, "right")
       right = true;
       break;
     case 40:
+      wsSendKeyInfo(true, "down")
       down = true;
       break;
     case 27:
       startGame();
       break
     case 17:
+      wsSendKeyInfo(true, "ctrl")
       ctrl = true
       break
     case 16:
+      wsSendKeyInfo(true, "shift")
       shift = true
       break
     case 49:
@@ -76,24 +93,31 @@ function keyDown(evt) {
 function keyUp(evt) {
   switch (evt.keyCode) {
     case 32:
+      wsSendKeyInfo(false, "space")
       space = false;
       break;
     case 37:
+      wsSendKeyInfo(false, "left")
       left = false;
       break;
     case 38:
+      wsSendKeyInfo(false, "up")
       up = false;
       break;
     case 39:
+      wsSendKeyInfo(false, "right")
       right = false;
       break;
     case 40:
+      wsSendKeyInfo(false, "down")
       down = false;
       break;
     case 17:
+      wsSendKeyInfo(false, "ctrl")
       ctrl = false
       break
     case 16:
+      wsSendKeyInfo(false, "shift")
       shift = false
       break
   }
