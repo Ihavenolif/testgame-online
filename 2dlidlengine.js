@@ -4,7 +4,7 @@
 ---DEPRECATED---
 */
 
-ctx.fillStyle = "white";
+/*ctx.fillStyle = "white";
 xpos = 350
 CDCount = 0;
 shots = [];
@@ -18,7 +18,7 @@ lost = false;
 inc = 0
 min = 0
 sec = 0
-canv.style.border = "2px solid #4caf50";
+canv.style.border = "2px solid #4caf50";*/
 
 
 function engineLoad(){

@@ -27,6 +27,35 @@ explosionCooldown = 0
 explosionRemainingCooldown = 0
 explosionLevel = 0
 explosionDamage = 0
+window.canv = document.getElementById("canv");
+window.ctx = canv.getContext("2d");
+window.canv.style.border = "2px solid #4caf50";
+window.canv.height = 700;
+window.canv.width = 700;
+document.addEventListener("keydown", keyDown);
+document.addEventListener("keyup", keyUp);
+window.left = false 
+window.right = false 
+window.up = false 
+window.down = false 
+window.shift = false 
+window.ctrl = false 
+window.space = false 
+ctx.fillStyle = "white";
+xpos = 350
+CDCount = 0;
+shots = [];
+enemyShots = [];
+enemies = [];
+health = 100;
+gamerunning = false;
+money = 50;
+score = 0;
+lost = false;
+inc = 0
+min = 0
+sec = 0
+canv.style.border = "2px solid #4caf50";
 
 document.addEventListener("keydown", keyDown2)
 
